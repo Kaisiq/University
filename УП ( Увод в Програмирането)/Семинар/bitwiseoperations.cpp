@@ -97,6 +97,8 @@ using namespace std;
 // }
 
 
+
+
 //TASK 7
 // int main(){
 //     int N,M,K;
@@ -105,15 +107,22 @@ using namespace std;
 //     K = ~N;
 //     M = (M & K);
 //     cout << (N<<1);
-    
-
-
 //     return 0;
 // }
 
+
+
+
+
+
+
+
+
+
+
+
 // 00000...101
 // 00000..1000
-
 
 
 //TASK 8
