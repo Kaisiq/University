@@ -172,17 +172,11 @@ int main() {
   Human owner;
   cout << "Enter Owner: \n";
   createHuman(owner);
-//  Human employee1;
   cout << "Enter employee1: \n";
-//  createHuman(employee1);
   createHuman(autohouse.employees[0]);
-//  Automobile auto1;
   cout << "Enter auto1 \n";
   createAuto(autohouse.autos[0]);
-//  createAuto(auto1);
-//  autohouse.employees[0] = employee1;
   autohouse.owner = owner;
-//  autohouse.autos[0] = auto1;
 
 
 
