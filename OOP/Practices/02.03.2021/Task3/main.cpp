@@ -1,15 +1,15 @@
 #include <iostream>
 using namespace std;
 
-struct Planet{
+struct Planet {
     char name[5];
     float distance;
     double diameter;
     double weight;
 };
 
-void insertPlanet(Planet& planet) {
-    for(int i=0; i<5; i++){
+void insertPlanet(Planet &planet) {
+    for (int i = 0; i < 5; i++) {
         cin >> planet.name[i];
     }
     cin >> planet.distance;
@@ -17,8 +17,8 @@ void insertPlanet(Planet& planet) {
     cin >> planet.weight;
 }
 
-void printInformation(const Planet& P){
-    for(int i=0; i<5; i++){
+void printInformation(const Planet &P) {
+    for (int i = 0; i < 5; i++) {
         cout << P.name[i];
     }
     cout << endl;
@@ -30,20 +30,18 @@ void printInformation(const Planet& P){
     cout << endl;
 }
 
-float travelTime(const Planet& p) {
-    return p.distance/(299792+0.0);
-}
+float travelTime(const Planet &p) { return p.distance / (299792 + 0.0); }
 
-int main(){
+int main() {
     Planet Planets[2];
-    for (int i=0; i<2; i++){
+    for (int i = 0; i < 2; i++) {
         insertPlanet(Planets[i]);
     }
-    for (int i=0; i<2; i++){
+    for (int i = 0; i < 2; i++) {
         printInformation(Planets[i]);
     }
     cout << endl;
-    for (int i=0; i<2; i++){
+    for (int i = 0; i < 2; i++) {
         cout << travelTime(Planets[i]);
         cout << endl;
     }
