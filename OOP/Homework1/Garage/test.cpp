@@ -35,8 +35,8 @@ TEST_CASE("at  and   []"){
   garage.insert(v1);
   REQUIRE(strcmp(garage.at(1).registration(),"BAPHA") == 0);
   REQUIRE(strcmp(garage.at(2).registration(),"BAPHA1") == 0);
-  REQUIRE(strcmp(garage[1].registration(),"BAPHA") == 0);
-  REQUIRE(strcmp(garage[2].registration(),"BAPHA1") == 0);
+  REQUIRE(strcmp(garage[0].registration(),"BAPHA") == 0);
+  REQUIRE(strcmp(garage[1].registration(),"BAPHA1") == 0);
 }
 
 TEST_CASE("clear"){
