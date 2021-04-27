@@ -11,7 +11,7 @@ class Weapon{
 
 public:
   void setName(char*);
-  char* const getName() const;
+  const char* const getName() const;
   int getPower() const;
   void setPower(int);
   int getHitsUntilBreak() const;
@@ -30,7 +30,7 @@ class Warrior{
 
 public:
   void setName(char*);
-  char* getName() const;
+  const char* getName() const;
   int getPower() const;
   void setPower(int);
   int getHealth() const;

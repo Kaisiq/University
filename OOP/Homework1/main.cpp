@@ -19,8 +19,8 @@ int main(){
     cin >> choice;
     switch(choice){
     case 1: {
-      char *registration = new(nothrow) char[16];
-      char *description = new(nothrow) char[16];
+      char registration[16];
+      char description[16];
       int space;
       cout << "Enter Registration number: ";
       cin >> registration;
@@ -28,8 +28,8 @@ int main(){
       cin >> description;
       cout << "Enter space needed for vehicle: ";
       cin >> space;
-      Vehicle v(registration, description, space);
-      garage.insert(v);
+      Vehicle vhcl(registration, description, space);
+      garage.insert(vhcl);
       break;
     }
     case 2: {
@@ -41,6 +41,8 @@ int main(){
       break;
     }
     case 3: {
+      for(int i=0; i<garage.size(); i++){
+      }
       garage.printGarage();
       break;
     }

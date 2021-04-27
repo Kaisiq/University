@@ -1,5 +1,6 @@
 #include "Garage.cpp"
-#include "catch_amalgamated.cpp"
+#include "../Catch2/catch_amalgamated.cpp"
+
 
 
 TEST_CASE("constructor"){
@@ -18,13 +19,19 @@ TEST_CASE("insert + copyConstructor"){
 }
 
 TEST_CASE("erase , empty and size"){
-  Vehicle v("BAPHA", "asd", 2);
-  Garage garage(3);
+  Vehicle v("BAPHA", "asd1", 1);
+  Vehicle v1("B3A3P3HA1", "asd2", 2);
+  Vehicle v2("BAP3H23A2", "asd3", 3);
+  Vehicle v3("BA4P4HA3", "asd4", 4);
+  Garage garage(12);
   garage.insert(v);
-  REQUIRE(garage.size()==1);
+  garage.insert(v1);
+  garage.insert(v2);
+  garage.insert(v3);
+  REQUIRE(garage.size()==4);
   garage.erase("BAPHA");
-  REQUIRE(garage.size()==0);
-  REQUIRE(garage.empty()==1);
+  REQUIRE(garage.size()==3);
+  REQUIRE(garage.empty()==0);
 }
 
 TEST_CASE("at  and   []"){
@@ -59,5 +66,12 @@ TEST_CASE("find"){
   Vehicle v3("B2APH3A", "asd", 1);
   garage.insert(v3);
   REQUIRE(strcmp(garage.find("BAPHA")->registration(), "BAPHA")==0);
+}
+
+TEST_CASE("add oversized vehicle to small garage"){
+  Garage garage(3);
+  Vehicle v("BA2PHA", "asd", 5);
+  garage.insert(v);
+  REQUIRE(garage.empty()==1);
 }
 

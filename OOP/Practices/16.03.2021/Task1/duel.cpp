@@ -8,7 +8,7 @@ void Weapon::setName(char* newName){
   name = newName;
 }
 
-char* const Weapon::getName() const{
+const char* const Weapon::getName() const{
   return name;
 }
 
@@ -52,7 +52,7 @@ Weapon createWeapon(){
 void Warrior::setName(char* newName){
   name = newName;
 }
-char* Warrior::getName() const{
+const char* Warrior::getName() const{
   return name;
 }
 int Warrior::getPower() const{

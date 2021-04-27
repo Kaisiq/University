@@ -10,10 +10,20 @@ MyString::MyString()
 }
 
 
+MyString::MyString(const char* str){
+  this->len = strlen(str);
+  char* result = new(std::nothrow) char[this->len+1];
+  for(int i=0; i<len; i++){
+    result[i] = str[i];
+  }
+  result[this->len] = '\0';
+  this->string = result;
+}
+
+
 MyString::~MyString(){
   delete[] this->string;
 }
-
 
 bool MyString::setString(const char* str){
   this->len = strlen(str);
@@ -25,8 +35,8 @@ bool MyString::setString(const char* str){
   }
   strncpy(tmpStr,str,len);
   tmpStr[len] = '\0';
-  if(this->string != nullptr) {
-    delete[] this->string;
+  if(this->getString()) {
+    this->clear();
   }
   this->string = tmpStr;
   return true;
@@ -36,18 +46,27 @@ const char* MyString::getString() const{
   return this->string;
 }
 
-MyString::MyString(const MyString& str){
-  this->len = str.len;
-  if(!setString(str.getString())){
+MyString::MyString(const MyString& rhs)
+    : MyString()
+{
+  this->len = rhs.len;
+  if(!(this->setString(rhs.getString()))){
     std::cout << "No Memory.";
   }
 }
 
-MyString::MyString(const char* str){
-  this->len = strlen(str);
-  if(!setString(str)){
-    std::cout << "No memory.";
+MyString &MyString::operator=(const MyString& rhs){
+  if(this == &rhs){
+    return *this;
   }
+  if(this != &rhs){
+    delete[] this->string;
+  }
+  this->len = rhs.len;
+  if(!(this->setString(rhs.getString()))){
+    std::cout << "No Memory.";
+  }
+  return *this;
 }
 
 char& MyString::at (std::size_t pos){
@@ -55,7 +74,7 @@ char& MyString::at (std::size_t pos){
     return this->string[pos-1];
   }
   else{
-    throw std::out_of_range(this->string);    // <------------------Idk if this even works
+    throw std::out_of_range(this->string); //<---------------------------
   }
 }
 
@@ -64,7 +83,7 @@ const char& MyString::at(std::size_t pos) const{
     return this->getString()[pos-1];
   }
   else{
-    throw std::out_of_range(this->getString());    // <------------------Idk if this even works
+    throw std::out_of_range(this->getString()); //<---------------------------
   }
 }
 char& MyString::operator[](std::size_t pos){
@@ -100,21 +119,25 @@ std::size_t MyString::size() const{
 }
 void MyString::clear(){
   this->len = 0;
-  delete[] this->string;
+  if(this->string) {
+    delete[] this->string;
+  }
   this->string = nullptr;
 }
 void MyString::push_back(char c){
   this->len += 1;
-  char* result = new(std::nothrow) char[len+1];
-  if(!result){
-    std::cout << "No Memory";
+  try{
+    char* result = new char[len+1];
+    strncpy(result,this->getString(),len-1);
+    result[len-1] = c;
+    result[len] = '\0';
+    delete[] this->string;
+    this->string = result;
+  }catch(std::bad_alloc& e) {
+    std::cerr << "Bad allocation! Returning to previous state.";
   }
-  strncpy(result,this->getString(),len-1);
-  result[len-1] = c;
-  result[len] = '\0';
-  delete[] this->string;
-  this->string = result;
 }
+
 void MyString::pop_back(){
   assert(len>=1);
   this->len -= 1;
@@ -128,30 +151,44 @@ void MyString::pop_back(){
   this->string = result;
 }
 MyString& MyString::operator+=(char c){
-  this->len += 1;
-  char* result = new(std::nothrow) char[len+1];
-  if(!result){
-    std::cout << "No Memory";
+  if(c==0){            // if adding '\0'
+    return *this;
   }
-  strncpy(result,this->getString(),len-1);
-  result[len-1] = c;
-  result[len] = '\0';
-  delete[] this->string;
-  this->string = result;
+  this->len += 1;
+  try {
+    char *result = new char[len + 1];
 
-  return *this;
+    strncpy(result, this->getString(), len - 1);
+    result[len - 1] = c;
+    result[len] = '\0';
+    delete[] this->string;
+    this->string = result;
+    return *this;
+  }
+  catch(std::bad_alloc& e){
+    std::cerr << "Bad allocation! Reverting to previous stage.";
+    return *this;
+  }
 }
 MyString& MyString::operator+=(const MyString& rhs){
   int resultLen = this->len + rhs.size() - 1;
-  char* result = new (std::nothrow) char[resultLen+1];
-  if(!result){
-    std::cout<< "No Memory.";
+  if(resultLen < 0) {   //if both MyStrings have length of 0 => 0+0-1 = -1
+    resultLen = 0;      //fixes the size back to 0 and the result will be good
   }
-  strcpy(result,this->getString());
-  strcat(result,rhs.getString());
-  this->len = resultLen;
-  delete[] this->string;
-  this->string = result;
+  try {
+    char *result = new char[resultLen + 1];
+
+    strcpy(result, this->getString());
+    strcat(result, rhs.getString());
+    this->len = resultLen;
+    delete[] this->string;
+    this->string = result;
+    return *this;
+  }
+  catch(std::bad_alloc& e){
+    std::cerr << "Bad allocation! Reverting to previous stage.";
+    return *this;
+  }
 }
 
 MyString MyString::operator+(char c) const{
@@ -185,6 +222,10 @@ MyString MyString::operator+(const MyString& rhs) const{
 
 const char* MyString::c_str() const{
   char* result = new (std::nothrow) char[this->len+1];
+  if(!result){
+    std::cerr<<"No mem";
+    return nullptr;
+  }
   strncpy(result,this->getString(),this->len);
   result[len] = '\0';
   return result;

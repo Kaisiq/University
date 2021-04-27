@@ -8,13 +8,14 @@ private:
   int len;
 public:
   MyString();
-//  MyString(char*);
+  MyString(const char* str);
   ~MyString();
   MyString(const MyString& str);
+  MyString &operator=(const MyString& str);
 
   const char* getString() const;
   bool setString(const char* str);
-  MyString(const char* str);
+
   char& at (std::size_t pos);
   const char& at(std::size_t pos) const;
   char& operator[](std::size_t pos);

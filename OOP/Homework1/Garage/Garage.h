@@ -6,11 +6,11 @@ private:
   std::size_t used;
   std::size_t vehicleCount;
   Vehicle** vehicles;
-  void removeVehicleFromArr(int);
 public:
   Garage(std::size_t size);
   ~Garage();
   Garage(const Garage&);
+  Garage& operator=(const Garage&);
   void insert(Vehicle& v);
   void erase(const char* registration);
   const Vehicle& at(std::size_t pos) const;

@@ -1,8 +1,11 @@
 #pragma once
 #include "Vehicle.h"
+#include <cassert>
 
 Vehicle::Vehicle(const char* registration, const char* description, std::size_t space)
 {
+  assert(registration);
+  assert(description);
   assert(space>0);
   this->licensePlate.setString(registration);
   this->descriptionOfVehicle.setString(description);

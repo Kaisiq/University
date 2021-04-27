@@ -1,7 +1,7 @@
 #include "../MyString/MyString.cpp"
 #include "Vehicle.cpp"
 
-#include "catch_amalgamated.cpp"
+#include "../Catch2/catch_amalgamated.cpp"
 
 
 TEST_CASE("constructor"){
