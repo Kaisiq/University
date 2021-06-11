@@ -1,11 +1,12 @@
 #pragma once
 #include "../Cell/Cell.h"
+#include "../Cell/FormulaCell.h"
 
 class Table{
 private:
   static Table* instance;  /**< instance of the table, implementing singleton
                               * @see  Table* getInstance() */
-  std::vector<Cell> table; /**< vector of type Cell (the table itself), holds all Cells with their ID and Value */
+  std::vector<Cell*> table; /**< vector of type Cell (the table itself), holds all Cells with their ID and Value */
   Table(){} /**< Default constructor of Table, has to be initialised here to maintain the singleton template */
 public:
   /**
@@ -36,19 +37,22 @@ public:
    * @param where -> Cell ID
    * @returns Cell at ID *where* from the table vector
    */
-  Cell* getCell(const char* where);
+   template <typename CellType>
+  CellType* getCell(const char* where);
 
-  /**
-   * @brief pushes the Cell *cell* at the back of the table vector
-   * @param cell -> Cell to be added to the Table.
-   */
+  size_t getCellID(const char* where);
+
+    /**
+     * @brief pushes the Cell *cell* at the back of the table vector
+     * @param cell -> Cell to be added to the Table.
+     */
   void addCell(Cell& cell);
 
   /**
    * @brief public function to get the table vector, if needed.
    * @return the vector with cells from Table
    */
-  std::vector<Cell>& getTable();
+  std::vector<Cell*>& getTable();
 
   /**
    * Gets the maximum space taken from a value in the given column (*a*)

@@ -3,12 +3,13 @@ class Formula
 {
 public:
   Formula() = default;
-  virtual float evaluate() = 0;
-  virtual std::ostream& print(std::ostream& out)=0;
   virtual ~Formula() = default;
-  virtual Formula* clone()=0;
   Formula(const Formula&) = delete;
   Formula& operator=(const Formula&) = delete;
+
+  virtual float evaluate() = 0;
+  virtual std::ostream& print(std::ostream& out)=0;
+  virtual Formula* clone()=0;
 };
 
 

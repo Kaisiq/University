@@ -15,19 +15,7 @@ char* tolower(const char* str);
  */
 bool isValidCell(const char* cell);
 
-/**
- * @brief Swaps the values of two cells in the table.
- * @param table -> Vector of type Cell, the table itself.
- * @param i -> ID of Cell one
- * @param j -> ID of Cell two
- */
-void swapValues(std::vector<Cell>& table, int i, int j);
 
-/**
- * @brief Sorts the table in ascending way
- * @param table -> Vector of type Cell (the table itself).
- */
-void sortTable(std::vector<Cell>& table);
 
 /**
  * @brief Validates if the given char* is a number (contains only numbers)
@@ -73,7 +61,7 @@ int operandsCount(const char* str);
  * @param str -> string with operands.
  * @returns the operand at position n from the char arr
  */
-char* getOperand(int n, const char* str);
+const char* getOperand(int n, const char* str);
 
 /**
  * @brief Gets the operator on position n from the char arr str
@@ -81,7 +69,7 @@ char* getOperand(int n, const char* str);
  * @param str -> string with operators.
  * @returns the operator at position n from the char arr
  */
-char getOperator(int n, const char* str);
+const char getOperator(int n, const char* str);
 
 /**
  * @brief Validates if the given char arr is an operation (starts with =, has operations and operands in it)
@@ -115,12 +103,6 @@ const char* stringWithoutQuotes(const char* value);
 template <typename T>
 T convertToNumber(const char* str);
 
-/**
- * @brief converts int to a char array
- * @param a -> gets converted to char arr
- * @returns the number with the type of a char arr (ex: 123 ---> 123 as string)
- */
-char* intToCharArr(const int a);
 
 /**
  * @brief checks if the given string has at least one number of type double and if it has a division as an operator
@@ -166,7 +148,7 @@ bool isValidInput(const char* str);
  * @param vector -> Vector of type Cell (the table itself)
  * @returns the biggest column char (biggest character from the cell names)
  */
-char getMaxChar(const std::vector<Cell>& vector);
+char getMaxChar(const std::vector<Cell*>& vector);
 
 /**
  * @brief converts the width from int to char to be printed as a letter
@@ -188,8 +170,31 @@ char* getNumFromName(const char* name);
  * @param vector -> vector of type Cell (the table itself)
  * @returns the biggest number from a cell ID in the table
  */
-int getMaxNum(const std::vector<Cell>& vector);
+int getMaxNum(const std::vector<Cell*>& vector);
 
+/**
+ * @brief checks for infinite loop formulas
+ * @param ID -> ID of Cell that has the formula
+ * @param formula -> the formula of the cell
+ * @returns true if there is a infinite loop
+ * @returns false if there is no infinite loop
+ */
+bool checkForInfiniteLoopFormulas(Cell* cell, const char* formula);
 
+/**
+ * @brief checks if a FormulaCell with a Cell in its value has "#ERROR" in its operands
+ * @param str -> gets their operands checked
+ * @returns true if the operand char* is "#ERROR"
+ * @returns false if the operand char* isn't "#ERROR"
+ */
+bool checkForError(const char* str);
+
+/**
+ * @brief checks if a char* representing a number is a valid int
+ * @param number -> char* that gets checked
+ * @returns true if the parameter is a valid int
+ * @returns false if the parameter is not a valid int
+ */
+bool isValidInt(const char* number);
 
 #include "HelperFunctions.cpp"

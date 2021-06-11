@@ -1,20 +1,23 @@
 #pragma once
 #include "Cell.h"
-#include "../Table/Table.cpp"
 
-Cell::Cell(const char* name_, const char* value) : name(name_){
-  this->value = value;
-}
-
-void Cell::changeValue(const char* newValue){
-  this->value = newValue;
-}
-
-const char* Cell::getValue() const{
-  return this->value;
-}
+Cell::Cell(const char* name_) : name(name_){}
 
 const char* Cell::getName() const {
   return this->name;
 }
 
+Cell::~Cell(){
+  delete[] this->name;
+}
+
+std::ostream& operator<<(std::ostream& out, const Cell* cell){
+  out << cell->getValue();
+  return out;
+}
+
+#include "IntCell.cpp"
+#include "DoubleCell.cpp"
+#include "StringCell.cpp"
+#include "FormulaCell.cpp"
+#include "../Table/Table.cpp"

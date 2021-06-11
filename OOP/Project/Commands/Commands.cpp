@@ -38,8 +38,7 @@ void open(const std::string path){
         }
         inputStr[input.size()] = '\0';
         char width = col + 'A';
-        char* height = intToCharArr(row);
-//        std::cout << width << " ";        <--------- debugging tool
+        const char* height = std::to_string(row).c_str();
         char* result = new char[strlen(height)+2];
         result[0] = width;
         strcat(result,height);
@@ -53,6 +52,8 @@ void open(const std::string path){
   in.close();
 }
 
+
+
 void save(std::string path){
   std::ofstream out;
   out.open(path, std::ios::in | std::ios::out);
@@ -65,14 +66,16 @@ void save(std::string path){
       out.close();
       out.open(path, std::ios::out | std::ios::trunc);
       if(!out.is_open()){
-        throw std::runtime_error("Couldn't open file!\n");
+        std::string error = "Couldn't open file with name ";
+        error += path;
+        error += '\n';
+        throw std::runtime_error(error);
       }
     }
   }
   if(!out.is_open()){
     throw std::runtime_error("Couldn't open file!\n");
   }
-  sortTable(Table::getInstance()->getTable());
 
   int sz = Table::getInstance()->getTable().size();
   int width = getMaxChar(Table::getInstance()->getTable()) - 'A' + 1;
@@ -82,30 +85,27 @@ void save(std::string path){
   for(int i=1; i<=height; i++) {
     for (int j = 0; j < width; j++) {
       for (int k = 0; k < sz; k++) {
-        if(widthToChar(j) == Table::getInstance()->getTable()[k].getName()[0]  &&  i == strToInt(getNumFromName(Table::getInstance()->getTable()[k].getName()))){
+        if(widthToChar(j) == Table::getInstance()->getTable()[k]->getName()[0] && i == strToInt(getNumFromName(Table::getInstance()->getTable()[k]->getName()))){
           for(int l=0; l<count; l++){
             out << ",";
           }
-          out << Table::getInstance()->getTable()[k].getValue();
+          count = 0;
+          if(strcmp(Table::getInstance()->getTable()[k]->getCellType(), "int")==0  ||  strcmp(Table::getInstance()->getTable()[k]->getCellType(), "double")==0)
+            out << Table::getInstance()->getTable()[k];
+          else if(strcmp(Table::getInstance()->getTable()[k]->getCellType(), "string")==0)
+            out << '\"' << Table::getInstance()->getTable()[k] << '\"';
+          else
+            out << Table::getInstance()->getCell<FormulaCell>(Table::getInstance()->getTable()[k]->getName())->getUncalculatedValue();
         }
       }
       count++;
     }
     count = 0;
-    if(i<height-1)
-    out << "\n";
+    if(i<=height-1)
+      out << "\n";
   }
-
-  
 
 
   out.close();
 }
-
-void saveas(std::string path){
-
-}
-
-
-
 

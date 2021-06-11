@@ -8,11 +8,13 @@ Table* Table::instance = nullptr;
 
 int main(){
   std::cout << "<===========  Welcome to the table manager program! ==========>\n\n";
+  std::string currentFile;
   while(true) {
     std::cout << "Commands: \n"
               << "Open (\"path\") ---------> opens a file\n"
-              << "Save (\"path\") ---------> saves a file\n"
-              << "Saveas (\"path\") -------> save a file with a format\n"
+              << "Save --------------------> saves the current file\n"
+              << "Saveas (\"path\") -------> save the table on the given path\n"
+              << "Close -------------------> closes the current open file\n"
               << "Print -----------------> prints the table\n"
               << "Edit(\"what\", \"value\")--> edits the given cell with the given value\n"
               << "Exit ------------------> exits the program.\n";
@@ -25,25 +27,33 @@ int main(){
         std::cin >> dummy;
         std::getline(std::cin, path, '\"');
         open(path);
+        currentFile = path;
         std::cout << "File was opened\n";
       }
+      else if (strcmp(tolower(command), "new") == 0) {
+        currentFile.clear();
+        Table::getInstance()->getTable().clear();
+        std::cout << "New File was created.\n";
+      }
       else if (strcmp(tolower(command), "save") == 0) {
-        std::string path;
-        char dummy;
-        std::cin >> dummy;
-        std::getline(std::cin, path, '\"');
-        save(path);
+        save(currentFile);
+        std::cout << "File was saved\n";
       }
       else if (strcmp(tolower(command), "saveas") == 0) {
         std::string path;
         char dummy;
         std::cin >> dummy;
         std::getline(std::cin, path, '\"');
-        std::cin >> dummy;
-        saveas(path);
+        save(path);
+        std::cout << "File was saved\n";
+      }
+      else if (strcmp(tolower(command), "close") == 0) {
+        currentFile.clear();
+        std::cout << "File was closed.\n";
       }
       else if (strcmp(tolower(command), "print") == 0){
         Table::getInstance()->printTable();
+        std::cout << "Table was printed.\n";
       }
       else if (strcmp(tolower(command), "edit") == 0) {
         char* where = new char[256];
@@ -58,16 +68,27 @@ int main(){
         Table::getInstance()->editMember(where, value);
       }
       else if (strcmp(tolower(command), "exit") == 0) {
-        std::cout << "\nExiting the program..\n";
+        std::cout << "Exiting the program..\n";
         return 0;
       }
       else {
-        throw std::invalid_argument("Invalid command\n");
+        std::string error = "Invalid command -> ";
+        error += command;
+        error += '\n';
+        throw std::invalid_argument(error);
       }
     }
     catch(std::invalid_argument& e){
-      std::cerr << e.what()
-                << "Ending operation.\n";
+      std::cerr << e.what() << "Ending operation.\n";
+    }
+    catch(std::runtime_error& e){
+      std::cerr << e.what() << "Ending operation.\n";
+    }
+    catch(std::bad_alloc &e){
+      std::cerr << e.what() << "Ending operation.\n";
+    }
+    catch(std::out_of_range& e){
+      std::cerr << e.what() << "Cancelling the operation.\n";
     }
   }
 }

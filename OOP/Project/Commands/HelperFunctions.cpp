@@ -1,5 +1,7 @@
 #pragma once
 #include <cmath>
+#include "../Table/Table.h"
+#include "../Cell/FormulaCell.cpp"
 
 char* tolower(const char* str){
   int len = strlen(str);
@@ -36,24 +38,6 @@ bool isValidCell(const char* cell){
   return true;
 }
 
-void swapValues(std::vector<Cell>& table, int i, int j){
-  Cell a = table[i];
-  table[i] = table[j];
-  table[j] = a;
-}
-
-void sortTable(std::vector<Cell>& table){
-  int sz = table.size();
-  for(int i=0; i<sz-1; i++){
-    int min = i;
-    for(int j=i+1; j<sz; j++){
-      if(strcmp(table[i].getName(), table[j].getName()) > 0){
-        min = j;
-      }
-    }
-    swapValues(table, min, i);
-  }
-}
 
 
 
@@ -77,6 +61,22 @@ bool isValidNumber(const char* number){
           return false;
         }
       }
+    }
+  }
+  return true;
+}
+
+bool isValidInt(const char* number){
+  size_t sz = strlen(number);
+  if(sz <= 0){
+    return false;
+  }
+  if(number[0] != '-'  &&  (number[0] < '0' || number[0] > '9')){
+    return false;
+  }
+  for(int i=1; i<sz; i++){
+    if(!(number[i] >= '0' && number[i] <= '9')){
+      return false;
     }
   }
   return true;
@@ -149,9 +149,14 @@ int operandsCount(const char* str){
   return count;
 }
 
-char* getOperand(int n, const char* str){
+const char* getOperand(int n, const char* str){
   if(n > operandsCount(str)){
-    throw std::invalid_argument("Operands are less than that!\n");
+    std::string error = "Couldn't get operrand ";
+    error += n;
+    error += " from the formula, because it has only ";
+    error += operandsCount(str);
+    error += " operands\n";
+    throw std::invalid_argument(error);
   }
   int count=0;
   int i=1;
@@ -162,15 +167,17 @@ char* getOperand(int n, const char* str){
         i++;
       }
       int sz = i-j;
-      char* result = new char[sz];
+      char *result = new char[sz+1];
       i = 0;
-      while (str[j] != '+' && str[j] != '-' && str[j] != '/' && str[j] != '*' && str[i]!='\0') {
+      while (str[j] != '+' && str[j] != '-' && str[j] != '/' && str[j] != '*' && str[i] != '\0'  && i<sz) {
         result[i] = str[j];
         j++;
         i++;
+        result[sz] = '\0';
       }
       return result;
-    } else {
+    }
+    else {
       while (str[i] != '+' && str[i] != '-' && str[i] != '/' && str[i] != '*' && str[i]!='\0') {
         i++;
       }
@@ -178,10 +185,13 @@ char* getOperand(int n, const char* str){
       i++;
     }
   }
-  throw std::runtime_error("error\n");
+  std::string error = "Couldn't get operrand ";
+  error += n;
+  error += " from the formula\n";
+  throw std::runtime_error(error);
 }
 
-char getOperator(int n, const char* str){
+const char getOperator(int n, const char* str){
   int count = -1;
   int i=0;
   size_t sz = strlen(str);
@@ -217,8 +227,16 @@ bool isValidOperation(const char* str){
 int strToInt(const char* str){
   size_t sz = strlen(str);
   int result = 0;
-  for(int i=0; i<sz; i++){
-    result += (str[i] - '0') * pow(10, sz-i-1);
+  if(str[0] != '-') {
+    for (int i = 0; i < sz; i++) {
+      result += (str[i] - '0') * pow(10, sz - i - 1);
+    }
+  }
+  else{
+    for (int i = 1; i < sz; i++) {
+      result += (str[i] - '0') * pow(10, sz - i - 1);
+    }
+    result *= -1;
   }
   return result;
 }
@@ -240,25 +258,13 @@ const char* stringWithoutQuotes(const char* value){
 template <typename T>
 T convertToNumber(const char* str){
   size_t sz = strlen(str);
-  if(isValidNumber(str)){
-    if(isValidDouble(str)){
-      int toDot = 0;
-      while(str[toDot] != '.' && str[toDot] != '\0'){
-        toDot++;
-      }
-      double result = 0;
-      for(int i=0; i<toDot; i++){
-        result += (str[i] - '0') * pow(10, toDot-i-1);
-      }
-      for(int i=toDot+1; i<sz; i++){
-        result += (str[i] - '0') * pow(0.1 , i-toDot);
-      }
-      return result;
-    }
-    else{
-      int result = strToInt(str);
-      return result;
-    }
+  if(isValidDouble(str)){
+    double result = atof(str);
+    return result;
+  }
+  else if (isValidInt(str)){
+    int result = strToInt(str);
+    return result;
   }
   else if(isValidString(str)){
     if(!isValidNumber(stringWithoutQuotes(str))){
@@ -269,32 +275,19 @@ T convertToNumber(const char* str){
     }
   }
   else if(isValidCell(str)){
-    return convertToNumber<T>(Table::getInstance()->getCell(str)->getValue());
+    try {
+      return convertToNumber<T>(Table::getInstance()->getCell<Cell>(str)->getValue());
+    }
+    catch(std::invalid_argument& e){
+      if(strcmp(e.what(), "Couldn't find Cell!")==0){
+        return 0;
+      }
+    }
   }
   else{
     return 0;
   }
 
-}
-
-char* intToCharArr(const int a){
-  int b = a;
-  int len=0;
-  while(b!=0){
-    b/=10;
-    len++;
-  }
-  int integer[len];
-  b = a;
-  for(int i=0; i<len; i++){
-    integer[i] = b/pow(10,len-i-1);
-  }
-  char* result = new char[len+1];
-  for(int i=0; i<len; i++){
-    result[i] = integer[i] + '0';
-  }
-  result[len] = '\0';
-  return result;
 }
 
 
@@ -305,7 +298,7 @@ bool hasAtleastOneDoubleOrHasDivision(const char* str){
     operators[i] = getOperator(i,str);
   }
 
-  char** operands = new char* [operandsCount(str)];
+  const char** operands = new const char* [operandsCount(str)];
   int operandCount = operandsCount(str);
   for(int i=0; i<operandCount; i++){
     operands[i] = getOperand(i,str);
@@ -340,12 +333,24 @@ std::string calculateOperation(const char* str){
   std::string result;
   for(int i=0; i<operatorCount; i++) {
     if (operators[i] == '/') {
-      if (result.empty())
-        result = std::to_string(convertToNumber<T>(operands[i]) / convertToNumber<T>(operands[i + 1]));
-      else if (strcmp(result.c_str(), operands[i]) == 0)
-        result = std::to_string(convertToNumber<T>(result.c_str()) / convertToNumber<T>(operands[i + 1]));
-      if (strcmp(result.c_str(), operands[i + 1]) == 0)
-        result = std::to_string(convertToNumber<T>(result.c_str()) / convertToNumber<T>(operands[i]));
+      if (result.empty()) {
+        if(convertToNumber<T>(operands[i+1]) == 0)
+          result = "#ERROR";
+        else
+          result = std::to_string(convertToNumber<T>(operands[i]) / convertToNumber<T>(operands[i + 1]));
+      }
+      else if (strcmp(result.c_str(), operands[i]) == 0) {
+        if(convertToNumber<T>(operands[i+1]) == 0)
+          result = "#ERROR";
+        else
+          result = std::to_string(convertToNumber<T>(result.c_str()) / convertToNumber<T>(operands[i + 1]));
+      }
+      if (strcmp(result.c_str(), operands[i + 1]) == 0) {
+        if(convertToNumber<T>(operands[i]) == 0)
+          result = "#ERROR";
+        else
+          result = std::to_string(convertToNumber<T>(result.c_str()) / convertToNumber<T>(operands[i]));
+      }
       for (int j = i; j < operatorCount - 1; j++) {
         operators[j] = operators[j + 1];
         operators[operatorCount] = '\0';
@@ -423,6 +428,8 @@ std::string calculateOperation(const char* str){
       i--;
     }
   }
+  if(typeid(T) == typeid(double))
+    result.erase(result.find_last_not_of('0') + 1, std::string::npos);    //<---------- deletes all tailing zeroes from double number
   return result;
 }
 
@@ -454,14 +461,14 @@ bool isValidInput(const char* str){
 
 
 
-char getMaxChar(const std::vector<Cell>& vector){
+char getMaxChar(const std::vector<Cell*>& vector){
   if(vector.empty()){
     throw std::out_of_range("Vector is empty\n");
   }
-  char max = vector[0].getName()[0];
+  char max = vector[0]->getName()[0];
   for(int i=1; i<vector.size(); i++){
-    if(max < vector[i].getName()[0]){
-      max = vector[i].getName()[0];
+    if(max < vector[i]->getName()[0]){
+      max = vector[i]->getName()[0];
     }
   }
   return max;
@@ -475,7 +482,7 @@ char widthToChar(int width){
 
 char* getNumFromName(const char* name){
   int len = strlen(name);
-  char* number = new(std::nothrow) char[len];
+  char* number = new char[len];
   for(int i=0; i<len-1; i++){
     number[i] = name[i+1];
   }
@@ -484,15 +491,61 @@ char* getNumFromName(const char* name){
 }
 
 
-int getMaxNum(const std::vector<Cell>& vector){
+int getMaxNum(const std::vector<Cell*>& vector){
   if(vector.empty()){
     throw std::out_of_range("Vector is empty\n");
   }
-  int max = strToInt(getNumFromName(vector[0].getName()));
+  int max = strToInt(getNumFromName(vector[0]->getName()));
   for(int i=1; i<vector.size(); i++){
-    if(max < strToInt(getNumFromName(vector[i].getName()))){
-      max = strToInt(getNumFromName(vector[i].getName()));
+    if(max < strToInt(getNumFromName(vector[i]->getName()))){
+      max = strToInt(getNumFromName(vector[i]->getName()));
     }
   }
   return max;
+}
+
+
+bool checkForError(const char* str){
+  int operandCount = operandsCount(str);
+  const char** operands = new const char* [operandCount];
+  for (int i = 0; i < operandCount; i++) {
+    operands[i] = getOperand(i, str);
+  }
+  for (int i = 0; i < operandCount; i++) {
+    if(isValidCell(operands[i])){
+      if(strcmp(Table::getInstance()->getCell<Cell>(operands[i])->getValue(), "#ERROR")==0)
+        return true;
+    }
+  }
+  return false;
+}
+
+
+
+bool checkForInfiniteLoopFormulas(Cell* cell, const char* formula) {
+  const char* ID = cell->getName();
+  int operandCount = operandsCount(formula);
+  const char** operands = new const char* [operandCount];
+  for (int i = 0; i < operandCount; i++) {
+    operands[i] = getOperand(i, formula);
+  }
+  for (int i = 0; i < operandCount; i++) {
+    if (isValidCell(operands[i]) && (strcmp(Table::getInstance()->getCell<Cell>(operands[i])->getCellType(), "formula") == 0)) {
+      if (strcmp(ID, operands[i])==0) {   // A1     operand[0] A1    A1=A1+1
+        return true;
+      }
+      else{  //    A1   A2    A2=A1+1   A1=A2+1
+        int operandOperands = operandsCount(operands[i]);
+        for(int j=0; j<operandOperands; j++){
+          if(strcmp(ID, (Table::getInstance()->getCell<FormulaCell>(operands[i]))->operator[](j)) == 0){
+            return true;
+          }
+          else if(strcmp(Table::getInstance()->getCell<FormulaCell>(operands[i])->getName(), ID) != 0)
+            return checkForInfiniteLoopFormulas(cell, Table::getInstance()->getCell<FormulaCell>(operands[i])->getUncalculatedValue());
+          else continue;
+        }
+      }
+    }
+  }
+  return false;
 }
