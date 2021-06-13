@@ -1,7 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
-#include "Cell/Cell.cpp"
+#include <cmath>
+#include <iomanip>
+#include <fstream>
+#include "Cell/Cell.h"
+#include "Table/Table.h"
+#include "Commands/Commands.h"
 #include "Commands/HelperFunctions.h"
 
 Table* Table::instance = nullptr;

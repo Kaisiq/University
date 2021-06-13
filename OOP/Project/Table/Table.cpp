@@ -1,7 +1,4 @@
 #pragma once
-#include "Table.h"
-#include "../Commands/Commands.h"
-#include <iomanip>
 
 class Cell;
 

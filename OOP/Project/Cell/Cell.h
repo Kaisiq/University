@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 /**
  * Class that represents a Cell in a table.
  * The Cell has ID (ex: A1/B14/C24/Z2000)
@@ -68,7 +65,10 @@ public:
 
 
 
-
-
+#include "OOP/Project/Cell/DoubleCell/DoubleCell.h"
+#include "OOP/Project/Cell/IntCell/IntCell.h"
+#include "OOP/Project/Cell/StringCell/StringCell.h"
+#include "OOP/Project/Cell/FormulaCell/FormulaCell.h"
+#include "Cell.cpp"
 
 

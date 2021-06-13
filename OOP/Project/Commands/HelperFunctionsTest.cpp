@@ -1,13 +1,13 @@
+#include "HelperFunctions.cpp"
+#include "../Cell/Cell.cpp"
+#include "OOP/Project/Cell/DoubleCell/DoubleCell.h"
+#include "OOP/Project/Cell/FormulaCell/FormulaCell.h"
+#include "OOP/Project/Cell/IntCell/IntCell.h"
+#include "OOP/Project/Cell/StringCell/StringCell.h"
 #include "catch_amalgamated.cpp"
+#include <cstring>
 #include <iostream>
 #include <vector>
-#include <cstring>
-#include "../Cell/Cell.cpp"
-#include "../Cell/IntCell.h"
-#include "../Cell/FormulaCell.h"
-#include "../Cell/StringCell.h"
-#include "../Cell/DoubleCell.h"
-#include "HelperFunctions.cpp"
 
 Table* Table::instance = nullptr;
 

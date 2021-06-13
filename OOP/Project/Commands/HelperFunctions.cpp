@@ -1,7 +1,4 @@
 #pragma once
-#include <cmath>
-#include "../Table/Table.h"
-#include "../Cell/FormulaCell.cpp"
 
 char* tolower(const char* str){
   int len = strlen(str);

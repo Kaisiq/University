@@ -1,5 +1,4 @@
 #pragma once
-#include "Cell.h"
 
 Cell::Cell(const char* name_) : name(name_){}
 
@@ -16,8 +15,4 @@ std::ostream& operator<<(std::ostream& out, const Cell* cell){
   return out;
 }
 
-#include "IntCell.cpp"
-#include "DoubleCell.cpp"
-#include "StringCell.cpp"
-#include "FormulaCell.cpp"
-#include "../Table/Table.cpp"
+

@@ -197,4 +197,5 @@ bool checkForError(const char* str);
  */
 bool isValidInt(const char* number);
 
+#include "../Table/Table.h"
 #include "HelperFunctions.cpp"

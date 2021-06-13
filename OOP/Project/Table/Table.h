@@ -1,6 +1,5 @@
 #pragma once
-#include "../Cell/Cell.h"
-#include "../Cell/FormulaCell.h"
+#include "OOP/Project/Cell/FormulaCell/FormulaCell.h"
 
 class Table{
 private:
@@ -61,3 +60,5 @@ public:
    */
   int getMaxWhitespace(char a);
 };
+
+#include "Table.cpp"

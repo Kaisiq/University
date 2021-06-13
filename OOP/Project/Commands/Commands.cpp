@@ -1,6 +1,5 @@
 #pragma once
-#include "HelperFunctions.cpp"
-#include <fstream>
+#include "HelperFunctions.h"
 
 void open(const std::string path){
   std::ifstream in;
